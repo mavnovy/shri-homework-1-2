@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Видеонаблюдение</title>
+    <style>
+        html{
+            touch-action: none;
+        }
+        body{
+            margin: 0;
+            touch-action: none;
+        }
+        .container_video {
+            overflow: hidden;
+            width: 300px;
+            height: 200px;
+            touch-action: none;
+            position: fixed;
+            z-index: 1;
+            transition: width 0.2s  ease,height 0.2s ease,transform 0.2s ease,z-index 0s linear 0.2s ;
+        }
+        .container_video#video2{
+            transform: translateX(320px);
+        }
+        .container_video#video3{
+            transform: translateY(220px);
+        }
+        .container_video#video4{
+            transform: translate(320px, 220px);
+        }
+        .video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .moveVideo{
+            touch-action: none;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            transition: width 0.2s  ease-out,height 0.2s ease-out,transform 0.2s ease-out;
+        }
+        .moveVideo#video2{
+            transform: translateX(0);
+        }
+        .moveVideo#video3{
+            transform: translateY(0);
+        }
+        .moveVideo#video4{
+            transform: translate(0,0);
+        }
+        .openVideo{
+            object-fit: contain;
+        }
+        #filter_video,
+        #preview{
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            position: absolute;
+        }
+        #preview{
+            visibility: hidden;
+        }
+        .menu{
+            z-index: 10;
+            top: 10px;
+            position: fixed;
+            width: 100%;
+        }
+        #preview.show{
+            visibility: visible;
+        }
+        .menu{
+            text-align: left;
+        }
+        .menu > div{
+            position: absolute;
+            background-color: #FFFFFF;
+        }
+        .menu input{
+            top: 30px;
+            position: absolute;
+        }
+        .menu > .brightness{
+            left:20px;
+        }
+        .menu > .brightness input{
+            left:0px;
+        }
+        .menu > .contrast{
+            right:20px;
+        }
+        .menu > .contrast input{
+            right:0px;
+        }
+        #btn_back{
+            touch-action: none;
+            text-align: center;
+            right: 200px;
+            width: 100px;
+            height: 20px;
+        }
+        .chart_volume
+        {
+            bottom: 40px;
+            left: 80px;
+            background: #eee;
+            box-shadow: inset 3px 3px 3px 0px rgba(200, 200, 200, 1);
+            webkit-box-shadow: inset 3px 3px 3px 0px rgba(200, 200, 200, 1);
+            border-radius: 3px;
+            width: 20px;
+            height: 128px;
+            position: absolute;
+        }
+        .chart_volume > div
+        {
+            background-color: #55ae10;
+            border-radius: 3px;
+            bottom: 0;
+            position: absolute;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="test" style="z-index: 20;"></div>
+<div id="video1" touch-action="none" class="container_video">
+    <video id="video_1" class="video" muted playsinline autoplay></video>
+</div>
+<div id="video2" touch-action="none" class="container_video">
+    <video id="video_2" class="video" muted playsinline autoplay></video>
+</div>
+<div id="video3" touch-action="none" class="container_video">
+    <video id="video_3" class="video" muted playsinline autoplay></video>
+</div>
+<div id="video4" touch-action="none" class="container_video">
+    <video id="video_4" class="video" muted playsinline autoplay></video>
+</div>
+<div class="preview" id="preview">
+    <div class="chart_volume"><div style="height: 0;" id="volume"></div></div>
+    <div class="menu">
+        <div class="brightness">
+            Яркость <span>15</span>
+            <input id="brightness" type="range" value="100" min="0" max="200">
+        </div>
+        <div class="contrast">
+            Контраст <span>15</span>
+            <input id="contrast" type="range" value="15" min="0" max="200">
+        </div>
+        <div id="btn_back" touch-action="none" >вернуться</div>
+    </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+<script>
+    let AudioContext = window.AudioContext || window.webkitAudioContext;
+    let videos = {
+        video_1: {
+            src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8',
+            filters:{
+                brightness: 100,
+                contrast: 100
+            }
+        },
+        video_2: {
+            src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fsosed%2Fmaster.m3u8',
+            filters:{
+                brightness: 100,
+                contrast: 100
+            }
+        },
+        video_3: {
+            src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fdog%2Fmaster.m3u8',
+            filters:{
+                brightness: 100,
+                contrast: 100
+            }
+        },
+        video_4: {
+            src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fhall%2Fmaster.m3u8',
+            filters:{
+                brightness: 100,
+                contrast: 100
+            }
+        }
+    };
+    let activeElem = null;
+    let preview = document.getElementById('preview');
+    let volume = document.getElementById('volume');
+    let context = new AudioContext();
+    let analyser = context.createAnalyser();
+    analyser.smoothingTimeConstant = 0.3;
+    analyser.fftSize = 512;
+
+
+
+    const createAudio = () => {
+        if(!videos[activeElem.id].video) {
+            videos[activeElem.id].video = context.createMediaElementSource(activeElem);
+        }
+        videos[activeElem.id].video.connect(analyser);
+        analyser.connect(context.destination);
+        draw();
+    };
+
+    const draw = () => {
+        let array = new Uint8Array(analyser.fftSize);
+        analyser.getByteTimeDomainData(array);
+
+        let average = 0;
+        for (let i = 0; i < array.length; i++) {
+            average += Math.abs(array[i] - 128);
+        }
+
+        average /= array.length;
+        volume.style.height = average*5 + 'px';
+
+        requestAnimationFrame(draw);
+    };
+
+    const changeFilters = (id,val) => {
+        let filters = videos[activeElem.id].filters;
+        let filter_names = Object.keys(filters);
+        filters[id] = val;
+        let filter;
+        filter_names.map((name) => {
+            const f = name + '(' + filters[name] +  '%)';
+            filter = !filter ?  f : filter + ' ' + f;
+        });
+        activeElem.style.filter = filter;
+        document.querySelector( '.' + id + ' span').innerHTML = val;
+    };
+
+    const initValue = () => {
+        const filters = videos[activeElem.id].filters;
+        let filters_array = Object.keys(filters);
+        filters_array.map((id) => {
+            document.querySelector( '.' + id +' span').innerHTML = filters[id];
+            document.querySelector( '.' + id +' input').value = filters[id];
+        })
+    };
+
+    const addPointerEventVideo = (element) => {
+        element.addEventListener("pointerdown", (event) => {
+            activeElem = event.target;
+            preview.className = 'show';
+            activeElem.className += ' openVideo';
+            activeElem.parentElement.className += ' moveVideo';
+            initValue();
+            activeElem.muted = false;
+            createAudio();
+        });
+    };
+
+    const addEvent = () => {
+        document.getElementById('brightness').addEventListener('change',function(event) {
+            changeFilters('brightness', event.target.value);
+        });
+        document.getElementById('contrast').addEventListener('change',function(event) {
+            changeFilters('contrast', event.target.value);
+        });
+        document.getElementById('btn_back').addEventListener("pointerdown", (event) => {
+            if(activeElem){
+                activeElem.muted = true;
+                activeElem.className = 'video';
+                preview.className = '';
+                activeElem.parentElement.className = 'container_video';
+                videos[activeElem.id].video.disconnect(analyser);
+                activeElem = null;
+            }
+            analyser.disconnect();
+        });
+    };
+
+    const startVideo = () => {
+        let array = Object.keys(videos);
+        array.forEach((video_id =>{
+            const elem = document.getElementById(video_id);
+            initVideo(elem, videos[video_id].src);
+            addPointerEventVideo(elem.parentElement);
+        }));
+        addEvent();
+    };
+
+    const initVideo = (video, url) => {
+        if (Hls.isSupported()) {
+            let hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                video.play();
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
+            video.addEventListener('loadedmetadata', function () {
+                video.play();
+            });
+        }
+    };
+
+    window.onload = function(){
+        startVideo();
+    }
+</script>
+</html>
