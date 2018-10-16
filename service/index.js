@@ -29,7 +29,7 @@ app.listen(port, (err) => {
 const formatDate = () => {
     const msecSec = 1000;
     const msecMin = 60 * msecSec;
-    const msecHour = 24 * msecMin * msecSec;
+    const msecHour = 60 * msecMin * msecSec;
     let hh = 0,
         mm = 0,
         ss = 0;
