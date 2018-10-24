@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+//    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+//    "outDir": "./dist",
+    "outFile": "./dist/app.js",
+    "strict": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
