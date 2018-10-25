@@ -6,9 +6,11 @@ export class Events{
     startPosition: StartPosition;
     currentPosition: CurrentPosition[] = [];
     prevDiff: number;
+    zoom: HTMLElement | null;
 
     constructor(){
         this._camera = document.getElementById('camera');
+        this.zoom = document.getElementById('zoom_menu_cam');
         this.prevDiff = -1;
 
         this.startPosition = {
@@ -20,22 +22,12 @@ export class Events{
         };
     }
 
-    // setCurPosition(pointerId?:number = 0,startX?:number =0,startY?:number = 0,startPosition?:StartPosition = this.startPosition) {
-    //     this.currentPosition = [
-    //         pointerId: pointerId,
-    //         startX: startX,
-    //         startY: startY,
-    //         startPosition: startPosition
-    //     ]
-    // }
-
     addEvents(){
         if(this._camera) {
             this._camera.addEventListener("pointerdown", (event: PointerEvent) => {
                 if(!this._camera)
                     return;
                 this._camera.style.transition = 'none';
-                // this.setCurPosition(event.pointerId,event.x,event.y)
                 this.currentPosition.push({
                     pointerId: event.pointerId,
                     startX: event.x,
@@ -73,9 +65,8 @@ export class Events{
                             backgroundSize = parseInt(this._camera.style.backgroundSize) - 10;
                             this._camera.style.backgroundSize = backgroundSize <= this.startPosition.sizeMin ? this._camera.style.backgroundSize : (backgroundSize + 'px');
                         }
-                        const zoom = document.getElementById('zoom_menu_cam');
-                        if(zoom)
-                            zoom.innerHTML = Math.round((parseInt(this._camera.style.backgroundSize) / this.startPosition.size) * 100) + '%';
+                        if(this.zoom)
+                            this.zoom.innerHTML = Math.round((parseInt(this._camera.style.backgroundSize) / this.startPosition.size) * 100) + '%';
                     }
 
                     this.prevDiff = curDiff;
