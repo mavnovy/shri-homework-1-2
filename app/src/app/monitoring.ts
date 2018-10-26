@@ -1,7 +1,7 @@
 import {VideoController} from "./videoController";
 import {Video} from "./common/video";
 
-let videos:any = {
+let videos :any = {
     video_1: {
         src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8'
     },
@@ -18,11 +18,13 @@ let videos:any = {
 
 window.onload = () =>{
     const videoController = new VideoController(setVideos(), hls);
+
     videoController.startVideo();
 };
 
-function setVideos():Video {
+function setVideos() :Video {
     let array = Object.keys(videos);
+
     array.forEach(item => {
         videos[item].filters = {
             brightness: '100',

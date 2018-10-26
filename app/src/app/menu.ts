@@ -11,6 +11,7 @@ export class Menu {
         this.menu && this.menu.addEventListener("pointerdown", () => {
             if(!this.topNav)
                 return;
+
             if (this.topNav.className === 'topnav') {
                 this.topNav.className += ' responsive';
             } else {
