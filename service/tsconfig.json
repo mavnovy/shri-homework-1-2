@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "target": "es5",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "strict": true
+  },
+  "files": [
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": [
+    "src/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
