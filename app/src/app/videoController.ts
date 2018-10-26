@@ -1,4 +1,5 @@
 import {Video} from "./common/video";
+import * as Hls from "hls.js";
 
 export class VideoController{
     videos: Video;
@@ -6,14 +7,12 @@ export class VideoController{
     volume: HTMLElement | null;
     analyser: AnalyserNode;
     context: any;
-    hls: any;
     activeElem: any;
 
-    constructor(videos:Video, hls:any){
+    constructor(videos:Video){
         this.preview = document.getElementById('preview');
         this.volume = document.getElementById('volume');
         this.videos = videos;
-        this.hls = hls;
         this.context = new AudioContext();
         this.analyser = this.context.createAnalyser();
     }
@@ -157,12 +156,12 @@ export class VideoController{
     };
 
     initVideo(video: HTMLVideoElement, url: string) {
-        if (this.hls.isSupported()) {
-            let hls = new this.hls();
+        if (Hls.isSupported()) {
+            let hls = new Hls();
 
             hls.loadSource(url);
             hls.attachMedia(video);
-            hls.on(this.hls.Events.MANIFEST_PARSED, function () {
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
                 video.play();
             });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {

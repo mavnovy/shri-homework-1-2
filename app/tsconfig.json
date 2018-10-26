@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "module": "amd",
-//    "module": "commonjs",
     "target": "es5",
     "sourceMap": true,
-//    "outDir": "./dist",
     "outFile": "./dist/app.js",
     "strict": true
   },
+  "files": [
+    "./node_modules/@types/hls.js/index.d.ts"
+  ],
   "include": [
     "src/**/*.ts"
   ],

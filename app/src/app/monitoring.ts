@@ -17,7 +17,8 @@ let videos :any = {
 };
 
 window.onload = () =>{
-    const videoController = new VideoController(setVideos(), hls);
+
+    const videoController = new VideoController(setVideos());
 
     videoController.startVideo();
 };
