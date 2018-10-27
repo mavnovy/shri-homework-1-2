@@ -9,7 +9,7 @@ export class VideoController{
     context: any;
     activeElem: any;
 
-    constructor(videos:Video){
+    constructor(videos: Video){
         this.preview = document.getElementById('preview');
         this.volume = document.getElementById('volume');
         this.videos = videos;
@@ -20,7 +20,7 @@ export class VideoController{
     createAudio() {
         let video = this.videos[this.activeElem.id].video;
 
-        if(!video) {
+        if (!video) {
             video = this.context.createMediaElementSource(this.activeElem);
         }
 
@@ -31,7 +31,7 @@ export class VideoController{
 
     draw() {
         let average = 0;
-        let array = new Uint8Array(this.analyser.fftSize);
+        const array = new Uint8Array(this.analyser.fftSize);
         this.analyser.getByteTimeDomainData(array);
 
         for (let i = 0; i < array.length; i++) {
@@ -41,54 +41,54 @@ export class VideoController{
         average /= array.length;
 
         if (this.volume)
-            this.volume.style.height = average*5 + 'px';
+            this.volume.style.height = average * 5 + 'px';
 
         requestAnimationFrame(() => {
             this.draw();
         });
     };
 
-    changeFilters(id: string, val:string) {
-        let filter: string = '';
-        let filters = this.videos[this.activeElem.id].filters;
-        let filter_names = Object.keys(filters);
+    changeFilters(id: string, val: string) {
+        let filter = '';
+        const filters = this.videos[this.activeElem.id].filters;
+        const filter_names = Object.keys(filters);
         const span = document.querySelector( `.${id} span`);
 
         filters[id] = val;
 
         filter_names.forEach((name) => {
-            const f =`${name}(${filters[name]}%)`;
+            const f = `${name}(${filters[name]}%)`;
             filter = !filter ?  f : `${filter} ${f}`;
         });
 
         this.activeElem.style.filter = filter;
 
-        if(span)
+        if (span)
             span.innerHTML = val;
     };
 
     initValue() {
         const filters = this.videos[this.activeElem.id].filters;
-        let filters_array = Object.keys(filters);
+        const filters_array = Object.keys(filters);
 
         filters_array.forEach((id) => {
             const span = document.querySelector( `.${id} span`);
-            const input: HTMLInputElement | null = document.querySelector( `.${id} input`);
+            const input = <HTMLInputElement>document.querySelector( `.${id} input`);
 
-            if(span)
+            if (span)
                 span.innerHTML = filters[id];
 
-            if(input)
+            if (input)
                 input.value = filters[id];
         })
     };
 
     addPointerEventVideo(element: HTMLElement | null) {
-        if(element)
+        if (element)
             element.addEventListener("pointerdown", (event) => {
                 this.activeElem = event.target;
 
-                if(this.preview)
+                if (this.preview)
                     this.preview.className = 'show';
 
                 this.activeElem.className += ' openVideo';
@@ -104,60 +104,61 @@ export class VideoController{
         const contrast = document.getElementById('contrast');
         const btn_back = document.getElementById('btn_back');
 
-        if(brightness)
-            brightness.addEventListener('change',(event: Event) => {
+        if (brightness)
+            brightness.addEventListener('change', (event: Event) => {
                 const target = <HTMLInputElement> event.target;
 
-                if(target)
+                if (target)
                     this.changeFilters('brightness', target.value);
             });
 
-        if(contrast)
-            contrast.addEventListener('change',(event: Event) => {
+        if (contrast)
+            contrast.addEventListener('change', (event: Event) => {
                 const target = <HTMLInputElement> event.target;
 
-                if(target)
+                if (target)
                     this.changeFilters('contrast', target.value);
             });
 
-        if(btn_back) {
+        if (btn_back) {
             btn_back.addEventListener("pointerdown", () => {
-                if(this.activeElem){
-                    let video = this.videos[this.activeElem.id].video;
+                if (this.activeElem){
+                    const video = this.videos[this.activeElem.id].video;
 
                     this.activeElem.muted = true;
                     this.activeElem.className = 'video';
                     this.activeElem.parentElement.className = 'container_video';
 
-                    if(this.preview)
+                    if (this.preview)
                         this.preview.className = '';
 
-                    if(video)
+                    if (video)
                         video.disconnect(this.analyser);
 
                     this.activeElem = null;
                 }
                 this.analyser.disconnect();
-            });}
+            });
+        }
     };
 
     startVideo() {
-        let array = Object.keys(this.videos);
+        const array = Object.keys(this.videos);
 
-        array.forEach((video_id =>{
+        array.forEach(video_id => {
             const elem = <HTMLVideoElement>document.getElementById(video_id);
 
             this.videos[video_id] && this.initVideo(elem, this.videos[video_id].src);
 
-            if(elem)
+            if (elem)
                 this.addPointerEventVideo(elem.parentElement);
-        }));
+        });
         this.addEvent();
     };
 
     initVideo(video: HTMLVideoElement, url: string) {
         if (Hls.isSupported()) {
-            let hls = new Hls();
+            const hls = new Hls();
 
             hls.loadSource(url);
             hls.attachMedia(video);

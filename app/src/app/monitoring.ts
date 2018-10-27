@@ -1,7 +1,7 @@
 import {VideoController} from "./videoController";
 import {Video} from "./common/video";
 
-let videos :any = {
+const videos: any = {
     video_1: {
         src: 'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8'
     },
@@ -16,15 +16,15 @@ let videos :any = {
     }
 };
 
-window.onload = () =>{
+window.onload = () => {
 
     const videoController = new VideoController(setVideos());
 
     videoController.startVideo();
 };
 
-function setVideos() :Video {
-    let array = Object.keys(videos);
+function setVideos(): Video {
+    const array = Object.keys(videos);
 
     array.forEach(item => {
         videos[item].filters = {

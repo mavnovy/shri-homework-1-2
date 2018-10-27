@@ -58,15 +58,15 @@ define("events", ["require", "exports"], function (require, exports) {
                             if (!_this._camera.style.backgroundSize)
                                 _this._camera.style.backgroundSize = '1000px';
                             if (curDiff > _this.prevDiff) {
-                                backgroundSize = parseInt(_this._camera.style.backgroundSize) + 10;
+                                backgroundSize = parseInt(_this._camera.style.backgroundSize, 10) + 10;
                                 _this._camera.style.backgroundSize = backgroundSize >= _this.startPosition.sizeMax ? _this._camera.style.backgroundSize : backgroundSize + "px";
                             }
                             if (curDiff < _this.prevDiff) {
-                                backgroundSize = parseInt(_this._camera.style.backgroundSize) - 10;
+                                backgroundSize = parseInt(_this._camera.style.backgroundSize, 10) - 10;
                                 _this._camera.style.backgroundSize = backgroundSize <= _this.startPosition.sizeMin ? _this._camera.style.backgroundSize : backgroundSize + "px";
                             }
                             if (_this.zoom)
-                                _this.zoom.innerHTML = Math.round((parseInt(_this._camera.style.backgroundSize) / _this.startPosition.size) * 100) + "%";
+                                _this.zoom.innerHTML = Math.round((parseInt(_this._camera.style.backgroundSize) / _this.startPosition.size, 10) * 100) + "%";
                         }
                         _this.prevDiff = curDiff;
                     }
@@ -81,9 +81,9 @@ define("events", ["require", "exports"], function (require, exports) {
             this.currentPosition = [];
             this.prevDiff = -1;
             if (this._camera.style.backgroundPositionX)
-                this.startPosition.x = parseInt(this._camera.style.backgroundPositionX);
+                this.startPosition.x = parseInt(this._camera.style.backgroundPositionX, 10);
             if (this._camera.style.backgroundPositionY)
-                this.startPosition.y = parseInt(this._camera.style.backgroundPositionY);
+                this.startPosition.y = parseInt(this._camera.style.backgroundPositionY, 10);
         };
         ;
         Events.prototype.move = function (event) {
@@ -145,7 +145,6 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
             this.preview = document.getElementById('preview');
             this.volume = document.getElementById('volume');
             this.videos = videos;
-            // this.hls = hls;
             this.context = new AudioContext();
             this.analyser = this.context.createAnalyser();
         }
@@ -256,12 +255,12 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
         VideoController.prototype.startVideo = function () {
             var _this = this;
             var array = Object.keys(this.videos);
-            array.forEach((function (video_id) {
+            array.forEach(function (video_id) {
                 var elem = document.getElementById(video_id);
                 _this.videos[video_id] && _this.initVideo(elem, _this.videos[video_id].src);
                 if (elem)
                     _this.addPointerEventVideo(elem.parentElement);
-            }));
+            });
             this.addEvent();
         };
         ;

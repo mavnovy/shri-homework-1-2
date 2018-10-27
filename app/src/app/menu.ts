@@ -9,7 +9,7 @@ export class Menu {
 
     addEvent(){
         this.menu && this.menu.addEventListener("pointerdown", () => {
-            if(!this.topNav)
+            if (!this.topNav)
                 return;
 
             if (this.topNav.className === 'topnav') {
