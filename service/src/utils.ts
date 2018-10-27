@@ -5,31 +5,31 @@ export namespace Utils {
         const msecMin = 60 * msecSec;
         const msecHour = 60 * msecMin;
         let hh: number,
-            mm: number = 0,
-            ss: number = 0;
+            mm = 0,
+            ss = 0;
         let diff = Date.now() - dateStart;
 
         hh = Math.floor(diff / msecHour); // часы
-        diff = diff - hh*msecHour;
+        diff = diff - hh * msecHour;
 
-        if(diff > 0) {
+        if (diff > 0) {
             mm = Math.floor(diff / msecMin); // минуты
-            diff = diff - mm*msecMin;
+            diff = diff - mm * msecMin;
 
-            if(diff > 0) {
+            if (diff > 0) {
                 ss = Math.floor(diff / msecSec); // секунды
             }
         }
 
         return `${hh}:${mm}:${ss}`;
-    };
+    }
 
     export function getEvents(type: string, events: any){
-        if(!type)
+        if (!type)
             return {status: 200, send: events};
 
         const types = type.split(':');
-        let isFindTypes:string[] = [];
+        const isFindTypes: string[] = [];
 
         const file = events.events.filter((card: any) => {// фильтрую events по типам
             if (types.indexOf(card.type) > -1){
@@ -40,10 +40,10 @@ export namespace Utils {
             return false;
         });
 
-        if(types.length > isFindTypes.length)
+        if (types.length > isFindTypes.length)
             return {status: 400, send: 'incorrect type'};
 
         return {status: 200, send: file};
 
-    };
+    }
 }

@@ -12,7 +12,7 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/api/events', (req, res) => {
-    let type: string = req.query.type;
+    const type: string = req.query.type;
     const result = Utils.getEvents(type, events);
 
     res.status(result.status).send(result.send);
