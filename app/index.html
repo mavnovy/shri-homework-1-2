@@ -20,7 +20,7 @@
                 <a href="#">Сводка</a>
                 <a href="#">Устройства</a>
                 <a href="#">Сценарии</a>
-                <a href="/monitoring.html">Видеонаблюдение</a>
+                <a href="./monitoring.html">Видеонаблюдение</a>
                 <a id="menu" href="#" class="icon">
                     <img src="img/icon_list_m.png" class="img_icon">
                 </a>
@@ -316,6 +316,10 @@
 </div>
 
 </body>
-<script src="app.js"></script>
 <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+<script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+<script src="dist/app.js"></script>
+<script>
+    require(["app"]);
+</script>
 </html>
