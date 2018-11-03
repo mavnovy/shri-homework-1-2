@@ -1,12 +1,12 @@
-define("common/startPosition", ["require", "exports"], function (require, exports) {
+define("app/common/startPosition", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("common/currentPosition", ["require", "exports"], function (require, exports) {
+define("app/common/currentPosition", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("events", ["require", "exports"], function (require, exports) {
+define("app/events", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -100,7 +100,7 @@ define("events", ["require", "exports"], function (require, exports) {
     }());
     exports.Events = Events;
 });
-define("menu", ["require", "exports"], function (require, exports) {
+define("app/menu", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Menu = /** @class */ (function () {
@@ -125,7 +125,7 @@ define("menu", ["require", "exports"], function (require, exports) {
     }());
     exports.Menu = Menu;
 });
-define("app", ["require", "exports", "events", "menu"], function (require, exports, events_1, menu_1) {
+define("app/app", ["require", "exports", "app/events", "app/menu"], function (require, exports, events_1, menu_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var events = new events_1.Events();
@@ -133,11 +133,67 @@ define("app", ["require", "exports", "events", "menu"], function (require, expor
     var menu = new menu_1.Menu();
     menu.addEvent();
 });
-define("common/video", ["require", "exports"], function (require, exports) {
+define("app/common/video", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("videoController", ["require", "exports", "hls.js"], function (require, exports, Hls) {
+define("flux/ActionTypes", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ActionTypes = {
+        CHANGE_VALUE: 'CHANGE_VALUE',
+    };
+    exports.default = ActionTypes;
+});
+define("flux/Store", ["require", "exports", "flux/ActionTypes"], function (require, exports, ActionTypes_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Store = /** @class */ (function () {
+        function Store() {
+        }
+        Store.prototype.reduce = function (action, value) {
+            switch (action.type) {
+                case ActionTypes_1.default.CHANGE_VALUE:
+                    var key = action.type + action.id;
+                    return Store.storage(key, value);
+                default:
+                    return null;
+            }
+        };
+        Store.storage = function (key, value) {
+            if (!value)
+                return localStorage.getItem(key);
+            localStorage.setItem(key, value);
+            return value;
+        };
+        return Store;
+    }());
+    exports.default = new Store();
+});
+define("flux/Dispatcher", ["require", "exports", "flux/Store"], function (require, exports, Store_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Dispatcher = /** @class */ (function () {
+        function Dispatcher() {
+        }
+        Dispatcher.prototype.dispatch = function (id, type, value) {
+            return Store_1.default.reduce({ type: type, id: id }, value);
+        };
+        return Dispatcher;
+    }());
+    exports.default = new Dispatcher();
+});
+define("flux/Action", ["require", "exports", "flux/ActionTypes", "flux/Dispatcher"], function (require, exports, ActionTypes_2, Dispatcher_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Actions = {
+        changeValue: function (id, value) {
+            return Dispatcher_1.default.dispatch(id, ActionTypes_2.default.CHANGE_VALUE, value);
+        },
+    };
+    exports.default = Actions;
+});
+define("app/videoController", ["require", "exports", "hls.js", "flux/Action"], function (require, exports, Hls, Action_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var VideoController = /** @class */ (function () {
@@ -175,16 +231,10 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
         };
         ;
         VideoController.prototype.changeFilters = function (id, val) {
-            var filter = '';
             var filters = this.videos[this.activeElem.id].filters;
-            var filter_names = Object.keys(filters);
             var span = document.querySelector("." + id + " span");
-            filters[id] = val;
-            filter_names.forEach(function (name) {
-                var f = name + "(" + filters[name] + "%)";
-                filter = !filter ? f : filter + " " + f;
-            });
-            this.activeElem.style.filter = filter;
+            filters[id] = Action_1.default.changeValue("" + this.activeElem.id + id, val) || '100';
+            this.initFiltersValue(this.activeElem);
             if (span)
                 span.innerHTML = val;
         };
@@ -202,6 +252,16 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
             });
         };
         ;
+        VideoController.prototype.initFiltersValue = function (element) {
+            var filter = '';
+            var filters = this.videos[element.id].filters;
+            var filters_array = Object.keys(filters);
+            filters_array.forEach(function (id) {
+                var f = id + "(" + filters[id] + "%)";
+                filter = !filter ? f : filter + " " + f;
+                element.style.filter = filter;
+            });
+        };
         VideoController.prototype.addPointerEventVideo = function (element) {
             var _this = this;
             if (element)
@@ -258,6 +318,7 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
             array.forEach(function (video_id) {
                 var elem = document.getElementById(video_id);
                 _this.videos[video_id] && _this.initVideo(elem, _this.videos[video_id].src);
+                _this.initFiltersValue(elem);
                 if (elem)
                     _this.addPointerEventVideo(elem.parentElement);
             });
@@ -285,7 +346,7 @@ define("videoController", ["require", "exports", "hls.js"], function (require, e
     }());
     exports.VideoController = VideoController;
 });
-define("monitoring", ["require", "exports", "videoController"], function (require, exports, videoController_1) {
+define("app/monitoring", ["require", "exports", "app/videoController", "flux/Action"], function (require, exports, videoController_1, Action_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var videos = {
@@ -310,8 +371,8 @@ define("monitoring", ["require", "exports", "videoController"], function (requir
         var array = Object.keys(videos);
         array.forEach(function (item) {
             videos[item].filters = {
-                brightness: '100',
-                contrast: '100'
+                brightness: Action_2.default.changeValue(item + "brightness") || '100',
+                contrast: Action_2.default.changeValue(item + "contrast") || '100'
             };
         });
         return videos;

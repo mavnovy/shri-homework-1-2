@@ -1,5 +1,6 @@
 import {VideoController} from "./videoController";
 import {Video} from "./common/video";
+import Actions from "../flux/Action";
 
 const videos: any = {
     video_1: {
@@ -28,8 +29,8 @@ function setVideos(): Video {
 
     array.forEach(item => {
         videos[item].filters = {
-            brightness: '100',
-            contrast: '100'
+            brightness: Actions.changeValue(`${item}brightness`) || '100',
+            contrast: Actions.changeValue(`${item}contrast`) || '100'
         }
     });
     return videos;
