@@ -1,5 +1,6 @@
 import {Video} from "./common/video";
 import * as Hls from "hls.js";
+import Actions from "../flux/Action";
 
 export class VideoController{
     videos: Video;
@@ -49,19 +50,12 @@ export class VideoController{
     };
 
     changeFilters(id: string, val: string) {
-        let filter = '';
         const filters = this.videos[this.activeElem.id].filters;
-        const filter_names = Object.keys(filters);
         const span = document.querySelector( `.${id} span`);
 
-        filters[id] = val;
+        filters[id] = Actions.changeValue(`${this.activeElem.id}${id}`, val) || '100';
 
-        filter_names.forEach((name) => {
-            const f = `${name}(${filters[name]}%)`;
-            filter = !filter ?  f : `${filter} ${f}`;
-        });
-
-        this.activeElem.style.filter = filter;
+        this.initFiltersValue(this.activeElem);
 
         if (span)
             span.innerHTML = val;
@@ -82,6 +76,19 @@ export class VideoController{
                 input.value = filters[id];
         })
     };
+
+    initFiltersValue(element: HTMLElement){
+        let filter = '';
+        const filters = this.videos[element.id].filters;
+        const filters_array = Object.keys(filters);
+
+        filters_array.forEach((id) => {
+            const f = `${id}(${filters[id]}%)`;
+            filter = !filter ? f : `${filter} ${f}`;
+
+            element.style.filter = filter;
+        });
+    }
 
     addPointerEventVideo(element: HTMLElement | null) {
         if (element)
@@ -149,6 +156,8 @@ export class VideoController{
             const elem = <HTMLVideoElement>document.getElementById(video_id);
 
             this.videos[video_id] && this.initVideo(elem, this.videos[video_id].src);
+
+            this.initFiltersValue(elem);
 
             if (elem)
                 this.addPointerEventVideo(elem.parentElement);
