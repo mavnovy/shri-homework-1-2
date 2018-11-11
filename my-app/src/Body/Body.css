@@ -16,13 +16,16 @@ body{
 }
 .Video2{
     background-color: #460aae;
-    transform: translateX(320px);
 }
 .Video3{
     background-color: #a9ae0f;
-    transform: translateY(220px);
 }
 .Video4{
     background-color: #ae2110;
-    transform: translate(320px, 220px);
+}
+.VideoBlock-Container_action_show.Video1,
+.VideoBlock-Container_action_show.Video2,
+.VideoBlock-Container_action_show.Video3,
+.VideoBlock-Container_action_show.Video4{
+    transform: translate(0, 0);
 }

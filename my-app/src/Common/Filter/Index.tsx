@@ -1,16 +1,17 @@
 import { compose, IClassNameProps } from '@bem-react/core';
 
 import { Filter as Base } from './Filter';
-import { FilterTypeBrightness } from './_type/Filter_type_brightness';
-import { FilterTypeContrast } from './_type/Filter_type_contrast';
+import { FilterTypeLeft} from './_position/Filter_type_left';
+import { FilterTypeRight } from './_position/Filter_type_right';
 
 export interface IFilterProps extends IClassNameProps {
     text: string;
-    type?: string;
+    name: string;
+    position?: string;
 }
 const Filter = compose(
-    FilterTypeBrightness,
-    FilterTypeContrast
+    FilterTypeLeft,
+    FilterTypeRight
 )(Base);
 
 export default Filter;

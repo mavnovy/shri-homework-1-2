@@ -1,18 +1,19 @@
 import React, { Component, ComponentState } from 'react';
 import './Body.css';
-import Menu from './menu/Menu';
-import Chart from './Chart';
-import Video from './video/Video';
+import Menu from '../Menu/Menu';
+import Chart from '../Common/Chart/Chart';
+import Video from '../Common/Video/Video';
 import {cn} from '@bem-react/classname';
 
 const cnPreview = cn('Preview');
+export const cnBody = cn('Body');
 
-interface IChildComponentState extends ComponentState {
+interface IBodyComponentState extends ComponentState {
     action: {[key: string]: string},
     show: boolean;
 }
 
-class Body extends Component<any, IChildComponentState> {
+export class Body extends Component<any, IBodyComponentState> {
     activeAction: string | null;
 
     constructor(props: any) {
@@ -54,5 +55,3 @@ class Body extends Component<any, IChildComponentState> {
         );
     }
 }
-
-export default Body;

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './Menu.css';
-import Filter from './Filter/Index';
+import Filter from '../Common/Filter/Index';
 import { cn } from '@bem-react/classname';
-import Button from './Button';
+import Button from '../Common/Button/Button';
 
 const cnMenu = cn('Menu');
 
@@ -14,8 +14,8 @@ class Menu extends Component<IChildComponentProps>{
     render(){
         return (
             <div className={cnMenu()}>
-                <Filter type="brightness" text="Яркость"/>
-                <Filter type="contrast" text="Контраст"/>
+                <Filter position="right" name="Brightness" text="Яркость"/>
+                <Filter position="left" name="Contrast" text="Контраст"/>
                 <Button name="Back" text="Назад" handleClick={this.props.handleClick}/>
             </div>
         );
