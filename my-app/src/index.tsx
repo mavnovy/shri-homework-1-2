@@ -8,7 +8,7 @@ import * as serviceWorker from './serviceWorker';
 import { isMobile } from "react-device-detect";
 
 ReactDOM.render(
-    !isMobile ? <AppMobile /> : <AppDesktop />,
+    isMobile ? <AppMobile /> : <AppDesktop />,
     document.getElementById('root')
 );
 serviceWorker.unregister();
