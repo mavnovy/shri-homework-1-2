@@ -6,13 +6,17 @@ import Button from './Button';
 
 const cnMenu = cn('Menu');
 
-class Menu extends Component{
+interface IChildComponentProps extends React.Props<any> {
+    handleClick: any;
+}
+
+class Menu extends Component<IChildComponentProps>{
     render(){
         return (
             <div className={cnMenu()}>
                 <Filter type="brightness" text="Яркость"/>
                 <Filter type="contrast" text="Контраст"/>
-                <Button name="Back" text="Назад"/>
+                <Button name="Back" text="Назад" handleClick={this.props.handleClick}/>
             </div>
         );
     }
