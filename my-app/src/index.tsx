@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { App } from './App';
-import { App as AppMobile } from './App.registry/App@mobile';
-import { App as AppDesktop } from './App.registry/App@desktop';
-import * as serviceWorker from './serviceWorker';
 import { isMobile } from "react-device-detect";
+import * as serviceWorker from './serviceWorker';
+
+
+const App = isMobile ? (require('./App.registry/App@mobile').App) : (require('./App.registry/App@desktop').App);
 
 ReactDOM.render(
-    isMobile ? <AppMobile /> : <AppDesktop />,
+    <App />,
     document.getElementById('root')
 );
 serviceWorker.unregister();
