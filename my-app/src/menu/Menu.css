@@ -1,0 +1,17 @@
+.Menu{
+    z-index: 10;
+    top: 10px;
+    position: fixed;
+    width: 100%;
+}
+.Menu{
+    text-align: left;
+}
+.Menu > div{
+    position: absolute;
+    background-color: #FFFFFF;
+}
+.Menu input{
+    top: 30px;
+    position: absolute;
+}

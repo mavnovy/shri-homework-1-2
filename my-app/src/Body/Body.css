@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+}
+.Preview{
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: absolute;
+    visibility: hidden;
+}
+.Preview_visible{
+    visibility: visible;
+}
+.Video1{
+    background-color: #55ae10;
+}
+.Video2{
+    background-color: #460aae;
+}
+.Video3{
+    background-color: #a9ae0f;
+}
+.Video4{
+    background-color: #ae2110;
+}
+.VideoBlock-Container_action_show.Video1,
+.VideoBlock-Container_action_show.Video2,
+.VideoBlock-Container_action_show.Video3,
+.VideoBlock-Container_action_show.Video4{
+    transform: translate(0, 0);
+}
